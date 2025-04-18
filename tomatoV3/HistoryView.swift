@@ -58,7 +58,7 @@ struct HistoryView: View {
                                 HStack {
                                     Text("番茄钟 #\(index + 1)")
                                     Spacer()
-                                    Text(Date().addingTimeInterval(-Double(index) * 1500).formatted(date: .omitted, time: .shortened))
+                                    Text(Date().addingTimeInterval(-Double(index) * 1500).formatted(date: .numeric, time: .shortened))
                                         .foregroundColor(.secondary)
                                 }
                             }

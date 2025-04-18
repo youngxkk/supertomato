@@ -60,7 +60,7 @@ struct PomodoroView: View {
                             .pickerStyle(SegmentedPickerStyle())
                             .padding(.horizontal, isIPad ? 100 : 20)
                             .disabled(pomodoro.timerIsActive)
-                            .onChange(of: pomodoro.timerMode) { _ in
+                            .onChange(of: pomodoro.timerMode) {
                                 pomodoro.resetTimer()
                             }
                             

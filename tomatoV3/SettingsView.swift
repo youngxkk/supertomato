@@ -11,6 +11,9 @@ struct SettingsView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var pomodoro: PomodoroModel
     
+    //来管理声音开关状态
+    @State private var soundEnabled: Bool = UserDefaults.standard.bool(forKey: "soundEnabled")
+    
     @State private var focusMinutes: Int = UserDefaults.standard.integer(forKey: "focusMinutes") > 0 ?
         UserDefaults.standard.integer(forKey: "focusMinutes") : 25
     @State private var shortBreakMinutes: Int = UserDefaults.standard.integer(forKey: "shortBreakMinutes") > 0 ?
@@ -21,6 +24,11 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
+                
+                Section(header: Text("声音设置")) {
+                    Toggle("专注结束播放音效", isOn: $soundEnabled)
+                }
+                
                 Section(header: Text("计时设置")) {
                     Stepper(value: $focusMinutes, in: 1...60) {
                         HStack {
@@ -82,6 +90,7 @@ struct SettingsView: View {
         UserDefaults.standard.set(focusMinutes, forKey: "focusMinutes")
         UserDefaults.standard.set(shortBreakMinutes, forKey: "shortBreakMinutes")
         UserDefaults.standard.set(longBreakMinutes, forKey: "longBreakMinutes")
+        UserDefaults.standard.set(soundEnabled, forKey: "soundEnabled")
         pomodoro.loadSettings()
     }
 }

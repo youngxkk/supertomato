@@ -7,6 +7,31 @@
 
 import Foundation
 import SwiftUICore
+import AVFoundation
+
+class AudioPlayerManager {
+    static let shared = AudioPlayerManager()
+    private var player: AVAudioPlayer?
+    
+    func playSound(named soundName: String) {
+        // 检查声音是否启用
+        guard UserDefaults.standard.bool(forKey: "soundEnabled") else {
+            return
+        }
+        
+        guard let url = Bundle.main.url(forResource: soundName, withExtension: "mp3") else {
+            print("音频文件未找到")
+            return
+        }
+        
+        do {
+            player = try AVAudioPlayer(contentsOf: url)
+            player?.play()
+        } catch {
+            print("播放音频时出错: \(error.localizedDescription)")
+        }
+    }
+}
 
 enum TimerMode {
     case focusing
@@ -50,6 +75,10 @@ class PomodoroModel: ObservableObject {
         if UserDefaults.standard.integer(forKey: "longBreakMinutes") == 0 {
             UserDefaults.standard.set(15, forKey: "longBreakMinutes")
         }
+        // 初始化声音设置，默认为开启
+        if UserDefaults.standard.object(forKey: "soundEnabled") == nil {
+            UserDefaults.standard.set(true, forKey: "soundEnabled")
+        }
         resetTimer()
     }
     
@@ -85,6 +114,12 @@ class PomodoroModel: ObservableObject {
             alertColor = .blue
             completedPomodoros += 1
             timerMode = completedPomodoros % 4 == 0 ? .longBreak : .shortBreak
+            
+            // 使用标准振动
+            VibrationManager.shared.vibrate(type: .success)
+            
+            // 专注结束时播放钢琴声
+            AudioPlayerManager.shared.playSound(named: "piano")
         } else {
             alertTitle = "休息时间结束"
 //            alertMessage = "休息时间到!\n准备好继续专注了吗?"
